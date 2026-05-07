@@ -1,0 +1,20 @@
+# ── Backend (Maven / Spring Boot) ─────────────────────────
+E-store/estore/target/
+E-store/estore/*.log
+
+# ── Frontend (Node / Vite) ─────────────────────────────────
+estore-frontend/node_modules/
+estore-frontend/dist/
+estore-frontend/.vite/
+
+# ── IDE ────────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/
+
+# ── OS ─────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Logs ───────────────────────────────────────────────────
+*.log
