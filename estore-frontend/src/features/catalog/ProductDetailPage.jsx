@@ -23,24 +23,32 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([
-      getProduct(id),
-      getProductReviews(id),
-    ]).then(([prodRes, revRes]) => {
-      setProduct(prodRes.data);
-      setReviews(revRes.data);
-      return checkStock(id, 1);
-    }).then(({ data }) => {
-      setStock(data);
-    }).catch(() => {})
-      .finally(() => setLoading(false));
+    async function load() {
+      try {
+        const [prodRes, revRes] = await Promise.allSettled([
+          getProduct(id),
+          getProductReviews(id),
+        ]);
+        if (prodRes.status === 'fulfilled') setProduct(prodRes.value.data);
+        if (revRes.status === 'fulfilled')  setReviews(revRes.value.data);
+        if (prodRes.status === 'fulfilled') {
+          try {
+            const { data } = await checkStock(id, 1);
+            setStock(data);
+          } catch {}
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
   }, [id]);
 
   const handleAddToCart = async () => {
     if (!user) { navigate('/login'); return; }
     try {
       const stockCheck = await checkStock(id, quantity);
-      if (!stockCheck.data.available) {
+      if (!stockCheck.data.sufficient) {
         setCartMsg('❌ Stock insuffisant pour cette quantité.');
         return;
       }
@@ -84,7 +92,7 @@ export default function ProductDetailPage() {
   if (loading) return <p className="loading-msg">Chargement...</p>;
   if (!product) return <p className="error-msg">Produit introuvable.</p>;
 
-  const available = stock?.available ?? false;
+  const available = stock?.sufficient ?? false;
 
   return (
     <div className="page-container">

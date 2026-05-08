@@ -135,6 +135,7 @@ a:hover { text-decoration: underline; }
 /* ── Messages ─────────────────────────────────────────── */
 .error-msg   { color: #dc2626; background: #fee2e2; padding: 10px 14px; border-radius: 8px; margin: 10px 0; font-size: 14px; }
 .success-msg { color: #065f46; background: #d1fae5; padding: 10px 14px; border-radius: 8px; margin: 10px 0; font-size: 14px; }
+.field-error { color: #dc2626; font-size: 12px; margin: -6px 0 6px 0; }
 .loading-msg { text-align: center; padding: 60px; color: #6b7280; font-size: 15px; }
 .empty-msg   { color: #6b7280; font-style: italic; margin: 20px 0; }
 

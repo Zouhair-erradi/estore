@@ -40,6 +40,21 @@ public class CatalogController {
         return ResponseEntity.status(HttpStatus.CREATED).body(catalogService.createProduct(request));
     }
 
+    // PUT /api/products/{id}
+    @PutMapping("/api/products/{id}")
+    public ResponseEntity<ProductResponse> updateProduct(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductRequest request) {
+        return ResponseEntity.ok(catalogService.updateProduct(id, request));
+    }
+
+    // DELETE /api/products/{id}
+    @DeleteMapping("/api/products/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        catalogService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
+
     // GET /api/categories
     @GetMapping("/api/categories")
     public ResponseEntity<List<Category>> getCategories() {

@@ -60,6 +60,32 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional
+    public ProductResponse updateProduct(Long id, ProductRequest request) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Produit introuvable ID : " + id));
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException("Catégorie introuvable"));
+
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setImageUrl(request.getImageUrl());
+        product.setCategory(category);
+
+        return toResponse(productRepository.save(product));
+    }
+
+    @Override
+    @Transactional
+    public void deleteProduct(Long id) {
+        if (!productRepository.existsById(id)) {
+            throw new EntityNotFoundException("Produit introuvable ID : " + id);
+        }
+        productRepository.deleteById(id);
+    }
+
+    @Override
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
@@ -71,6 +97,7 @@ public class CatalogServiceImpl implements CatalogService {
                 .description(p.getDescription())
                 .price(p.getPrice())
                 .imageUrl(p.getImageUrl())
+                .categoryId(p.getCategory() != null ? p.getCategory().getId() : null)
                 .categoryName(p.getCategory() != null ? p.getCategory().getName() : null)
                 .build();
     }

@@ -69,16 +69,19 @@ Base path: `/api` — all controllers use `@CrossOrigin(origins = "*")`.
 |---|---|---|
 | POST | `/auth/register`, `/auth/login` | Customer |
 | GET/PUT | `/auth/users/{id}`, `/auth/users/{id}/profile` | Customer |
-| GET/POST | `/products`, `/products/{id}`, `/categories` | Catalog |
-| GET/POST/PUT/DELETE | `/cart/{userId}`, `/cart/add`, `/cart/update/{itemId}`, `/cart/remove/{itemId}` | Shopping |
+| GET/POST/PUT/DELETE | `/products`, `/products/{id}` | Catalog |
+| GET | `/categories` | Catalog |
+| GET/POST/PUT/DELETE | `/cart/{userId}`, `/cart/add`, `/cart/update/{itemId}`, `/cart/remove/{itemId}`, `/cart/clear/{userId}` | Shopping |
 | POST/GET | `/orders`, `/orders/user/{userId}`, `/orders/{id}` | Billing |
-| GET/POST | `/inventory/check`, `/inventory/deduct` | Inventory |
+| GET/PUT/POST | `/inventory`, `/inventory/product/{productId}`, `/inventory/check`, `/inventory/deduct`, `/inventory/restore`, `/inventory/low-stock`, `/inventory/out-of-stock`, `/inventory/init/{productId}` | Inventory |
 | POST/GET | `/reviews`, `/reviews/product/{productId}` | MongoDB |
+
+**Query params:** `GET /products?search=keyword` or `GET /products?categoryId=1` (mutually exclusive filters). `PUT /cart/update/{itemId}?quantity=2` (quantity as query param, not body).
 
 ### Data Model
 
 ```
-User ──1:1── Profile
+User ──1:1── Profile  (User.role: enum USER | ADMIN, default USER)
 Category ──1:N── Product ──1:1── Inventory
 Cart ──1:N── CartItem  (productId as plain Long, not FK)
 Order ──1:N── OrderItem (denormalized: stores productName + unitPrice snapshot)

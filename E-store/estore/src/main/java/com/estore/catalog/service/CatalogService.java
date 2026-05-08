@@ -10,5 +10,7 @@ public interface CatalogService {
     List<ProductResponse> searchProducts(String keyword);
     List<ProductResponse> getByCategory(Long categoryId);
     ProductResponse createProduct(ProductRequest request);
+    ProductResponse updateProduct(Long id, ProductRequest request);
+    void deleteProduct(Long id);
     List<Category> getAllCategories();
 }

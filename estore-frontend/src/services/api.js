@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'http://localhost:8080/api',
+  timeout: 8000,
 });
 
 // ── Auth ────────────────────────────────────────────────
@@ -11,9 +12,12 @@ export const getUser  = (id)   => api.get(`/auth/users/${id}`);
 export const updateProfile = (id, data) => api.put(`/auth/users/${id}/profile`, data);
 
 // ── Catalog ─────────────────────────────────────────────
-export const getProducts   = (params) => api.get('/products', { params });
-export const getProduct    = (id)     => api.get(`/products/${id}`);
-export const getCategories = ()       => api.get('/categories');
+export const getProducts    = (params) => api.get('/products', { params });
+export const getProduct     = (id)     => api.get(`/products/${id}`);
+export const getCategories  = ()       => api.get('/categories');
+export const createProduct  = (data)   => api.post('/products', data);
+export const updateProduct  = (id, data) => api.put(`/products/${id}`, data);
+export const deleteProduct  = (id)     => api.delete(`/products/${id}`);
 
 // ── Cart ────────────────────────────────────────────────
 export const getCart      = (userId) => api.get(`/cart/${userId}`);
@@ -28,8 +32,10 @@ export const getUserOrders  = (userId) => api.get(`/orders/user/${userId}`);
 export const getOrder       = (id)     => api.get(`/orders/${id}`);
 
 // ── Inventory ───────────────────────────────────────────
-export const checkStock = (productId, quantity) =>
+export const checkStock      = (productId, quantity) =>
   api.get('/inventory/check', { params: { productId, quantity } });
+export const getAllInventory  = ()                => api.get('/inventory');
+export const updateStock     = (productId, data) => api.put(`/inventory/product/${productId}`, data);
 
 // ── Reviews (MongoDB) ───────────────────────────────────
 export const addReview        = (data)      => api.post('/reviews', data);

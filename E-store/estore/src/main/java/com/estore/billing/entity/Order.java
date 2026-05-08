@@ -18,6 +18,7 @@ public class Order {
     @Column(nullable = false)
     private Long userId;
 
+    @Builder.Default
     private LocalDateTime orderDate = LocalDateTime.now();
 
     @Column(nullable = false)

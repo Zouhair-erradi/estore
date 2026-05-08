@@ -4,10 +4,13 @@ import com.estore.catalog.entity.Category;
 import com.estore.catalog.entity.Product;
 import com.estore.catalog.repository.CategoryRepository;
 import com.estore.catalog.repository.ProductRepository;
+import com.estore.customer.entity.User;
+import com.estore.customer.repository.UserRepository;
 import com.estore.inventory.entity.Inventory;
 import com.estore.inventory.repository.InventoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,9 +20,22 @@ public class DataInitializer implements CommandLineRunner {
     private final CategoryRepository  categoryRepository;
     private final ProductRepository   productRepository;
     private final InventoryRepository inventoryRepository;
+    private final UserRepository      userRepository;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public void run(String... args) {
+
+        if (!userRepository.existsByEmail("admin@estore.com")) {
+            userRepository.save(User.builder()
+                    .firstName("Admin")
+                    .lastName("E-Store")
+                    .email("admin@estore.com")
+                    .password(passwordEncoder.encode("admin123"))
+                    .role(User.Role.ADMIN)
+                    .build());
+            System.out.println("✅ Compte admin créé : admin@estore.com / admin123");
+        }
 
         if (categoryRepository.count() > 0) return;
 

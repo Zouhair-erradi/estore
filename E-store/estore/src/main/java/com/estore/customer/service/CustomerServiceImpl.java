@@ -31,6 +31,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .role(User.Role.USER)
                 .build();
 
         User saved = userRepository.save(user);
@@ -91,6 +92,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
+                .role(user.getRole().name())
                 .profile(profileDto)
                 .build();
     }

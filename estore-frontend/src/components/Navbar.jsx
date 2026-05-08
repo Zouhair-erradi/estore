@@ -17,6 +17,7 @@ export default function Navbar() {
         <Link to="/products">Catalogue</Link>
         {user ? (
           <>
+            {user.role === 'ADMIN' && <Link to="/admin">Admin</Link>}
             <Link to="/cart">Panier</Link>
             <Link to="/orders">Commandes</Link>
             <Link to="/profile">Mon profil</Link>
