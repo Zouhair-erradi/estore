@@ -14,6 +14,8 @@ import ProfilePage          from './features/profile/ProfilePage';
 import AdminProductsPage    from './features/admin/AdminProductsPage';
 import AdminProductFormPage from './features/admin/AdminProductFormPage';
 import AdminInventoryPage   from './features/admin/AdminInventoryPage';
+import AdminCategoriesPage  from './features/admin/AdminCategoriesPage';
+import AdminOrdersPage      from './features/admin/AdminOrdersPage';
 
 export default function App() {
   return (
@@ -34,6 +36,8 @@ export default function App() {
             <Route path="/admin/products/new"      element={<PrivateAdminRoute><AdminProductFormPage /></PrivateAdminRoute>} />
             <Route path="/admin/products/edit/:id" element={<PrivateAdminRoute><AdminProductFormPage /></PrivateAdminRoute>} />
             <Route path="/admin/inventory"         element={<PrivateAdminRoute><AdminInventoryPage /></PrivateAdminRoute>} />
+            <Route path="/admin/categories"        element={<PrivateAdminRoute><AdminCategoriesPage /></PrivateAdminRoute>} />
+            <Route path="/admin/orders"            element={<PrivateAdminRoute><AdminOrdersPage /></PrivateAdminRoute>} />
           </Routes>
         </main>
       </BrowserRouter>

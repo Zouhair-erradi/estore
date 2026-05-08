@@ -52,7 +52,7 @@ public class CatalogServiceImpl implements CatalogService {
                 .name(request.getName())
                 .description(request.getDescription())
                 .price(request.getPrice())
-                .imageUrl(request.getImageUrl())
+                .imageUrls(request.getImageUrls() != null ? request.getImageUrls() : new java.util.ArrayList<>())
                 .category(category)
                 .build();
 
@@ -70,7 +70,7 @@ public class CatalogServiceImpl implements CatalogService {
         product.setName(request.getName());
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
-        product.setImageUrl(request.getImageUrl());
+        product.setImageUrls(request.getImageUrls() != null ? request.getImageUrls() : new java.util.ArrayList<>());
         product.setCategory(category);
 
         return toResponse(productRepository.save(product));
@@ -90,13 +90,35 @@ public class CatalogServiceImpl implements CatalogService {
         return categoryRepository.findAll();
     }
 
+    @Override
+    @Transactional
+    public Category createCategory(CategoryRequest request) {
+        if (categoryRepository.findByName(request.getName()).isPresent()) {
+            throw new IllegalStateException("Catégorie déjà existante : " + request.getName());
+        }
+        return categoryRepository.save(Category.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .build());
+    }
+
+    @Override
+    @Transactional
+    public void deleteCategory(Long id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new EntityNotFoundException("Catégorie introuvable ID : " + id);
+        }
+        productRepository.detachCategory(id);
+        categoryRepository.deleteById(id);
+    }
+
     private ProductResponse toResponse(Product p) {
         return ProductResponse.builder()
                 .id(p.getId())
                 .name(p.getName())
                 .description(p.getDescription())
                 .price(p.getPrice())
-                .imageUrl(p.getImageUrl())
+                .imageUrls(p.getImageUrls())
                 .categoryId(p.getCategory() != null ? p.getCategory().getId() : null)
                 .categoryName(p.getCategory() != null ? p.getCategory().getName() : null)
                 .build();

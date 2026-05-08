@@ -60,4 +60,17 @@ public class CatalogController {
     public ResponseEntity<List<Category>> getCategories() {
         return ResponseEntity.ok(catalogService.getAllCategories());
     }
+
+    // POST /api/categories
+    @PostMapping("/api/categories")
+    public ResponseEntity<Category> createCategory(@Valid @RequestBody CategoryRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(catalogService.createCategory(request));
+    }
+
+    // DELETE /api/categories/{id}
+    @DeleteMapping("/api/categories/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+        catalogService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
+    }
 }

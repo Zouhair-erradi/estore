@@ -6,10 +6,53 @@ import {
 } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
+function ImageSlider({ images }) {
+  const [current, setCurrent] = useState(0);
+
+  if (!images || images.length === 0) {
+    return (
+      <div className="no-image">
+        📦<span style={{ fontSize: '16px', color: '#94a3b8' }}>Pas d'image</span>
+      </div>
+    );
+  }
+
+  if (images.length === 1) {
+    return <img src={images[0]} alt="produit" className="slider-single" />;
+  }
+
+  const prev = () => setCurrent(i => (i - 1 + images.length) % images.length);
+  const next = () => setCurrent(i => (i + 1) % images.length);
+
+  return (
+    <div className="slider">
+      <div className="slider-track" style={{ transform: `translateX(-${current * 100}%)` }}>
+        {images.map((url, i) => (
+          <img key={i} src={url} alt={`vue-${i + 1}`} className="slider-img" />
+        ))}
+      </div>
+
+      <button className="slider-btn slider-btn-prev" onClick={prev} aria-label="Précédent">‹</button>
+      <button className="slider-btn slider-btn-next" onClick={next} aria-label="Suivant">›</button>
+
+      <div className="slider-dots">
+        {images.map((_, i) => (
+          <button
+            key={i}
+            className={`slider-dot${i === current ? ' active' : ''}`}
+            onClick={() => setCurrent(i)}
+            aria-label={`Image ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function ProductDetailPage() {
-  const { id }      = useParams();
-  const { user }    = useAuth();
-  const navigate    = useNavigate();
+  const { id }   = useParams();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [product,   setProduct]   = useState(null);
   const [stock,     setStock]     = useState(null);
@@ -93,6 +136,7 @@ export default function ProductDetailPage() {
   if (!product) return <p className="error-msg">Produit introuvable.</p>;
 
   const available = stock?.sufficient ?? false;
+  const images = product.imageUrls || [];
 
   return (
     <div className="page-container">
@@ -100,10 +144,7 @@ export default function ProductDetailPage() {
 
       <div className="detail-layout">
         <div className="detail-image">
-          {product.imageUrl
-            ? <img src={product.imageUrl} alt={product.name} />
-            : <div className="no-image">Pas d'image</div>
-          }
+          <ImageSlider images={images} />
         </div>
 
         <div className="detail-info">

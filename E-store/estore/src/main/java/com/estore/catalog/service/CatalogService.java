@@ -13,4 +13,6 @@ public interface CatalogService {
     ProductResponse updateProduct(Long id, ProductRequest request);
     void deleteProduct(Long id);
     List<Category> getAllCategories();
+    Category createCategory(CategoryRequest request);
+    void deleteCategory(Long id);
 }

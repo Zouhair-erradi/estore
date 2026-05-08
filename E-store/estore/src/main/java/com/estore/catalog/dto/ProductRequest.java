@@ -3,6 +3,9 @@ package com.estore.catalog.dto;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data @NoArgsConstructor @AllArgsConstructor
 public class ProductRequest {
 
@@ -15,7 +18,7 @@ public class ProductRequest {
     @Positive(message = "Le prix doit être positif")
     private Double price;
 
-    private String imageUrl;
+    private List<String> imageUrls = new ArrayList<>();
 
     @NotNull(message = "Catégorie obligatoire")
     private Long categoryId;

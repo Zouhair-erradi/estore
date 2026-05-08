@@ -7,4 +7,6 @@ public interface BillingService {
     OrderResponse placeOrder(OrderRequest request);
     List<OrderResponse> getOrdersByUser(Long userId);
     OrderResponse getOrderById(Long orderId);
+    List<OrderResponse> getAllOrders();
+    OrderResponse updateOrderStatus(Long orderId, String status);
 }

@@ -14,7 +14,9 @@ export const updateProfile = (id, data) => api.put(`/auth/users/${id}/profile`, 
 // ── Catalog ─────────────────────────────────────────────
 export const getProducts    = (params) => api.get('/products', { params });
 export const getProduct     = (id)     => api.get(`/products/${id}`);
-export const getCategories  = ()       => api.get('/categories');
+export const getCategories    = ()       => api.get('/categories');
+export const createCategory   = (data)   => api.post('/categories', data);
+export const deleteCategory   = (id)     => api.delete(`/categories/${id}`);
 export const createProduct  = (data)   => api.post('/products', data);
 export const updateProduct  = (id, data) => api.put(`/products/${id}`, data);
 export const deleteProduct  = (id)     => api.delete(`/products/${id}`);
@@ -27,15 +29,26 @@ export const removeFromCart = (itemId) => api.delete(`/cart/remove/${itemId}`);
 export const clearCart    = (userId) => api.delete(`/cart/clear/${userId}`);
 
 // ── Orders ──────────────────────────────────────────────
-export const placeOrder     = (data)   => api.post('/orders', data);
-export const getUserOrders  = (userId) => api.get(`/orders/user/${userId}`);
-export const getOrder       = (id)     => api.get(`/orders/${id}`);
+export const placeOrder         = (data)          => api.post('/orders', data);
+export const getUserOrders      = (userId)        => api.get(`/orders/user/${userId}`);
+export const getOrder           = (id)            => api.get(`/orders/${id}`);
+export const getAllOrders        = ()              => api.get('/orders');
+export const updateOrderStatus  = (id, status)    => api.put(`/orders/${id}/status`, null, { params: { status } });
 
 // ── Inventory ───────────────────────────────────────────
 export const checkStock      = (productId, quantity) =>
   api.get('/inventory/check', { params: { productId, quantity } });
 export const getAllInventory  = ()                => api.get('/inventory');
 export const updateStock     = (productId, data) => api.put(`/inventory/product/${productId}`, data);
+export const initInventory   = (productId, quantity) =>
+  api.post(`/inventory/init/${productId}`, null, { params: { quantity } });
+
+// ── Upload ──────────────────────────────────────────────
+export const uploadImage = (file) => {
+  const form = new FormData();
+  form.append('file', file);
+  return api.post('/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+};
 
 // ── Reviews (MongoDB) ───────────────────────────────────
 export const addReview        = (data)      => api.post('/reviews', data);

@@ -79,6 +79,25 @@ public class BillingServiceImpl implements BillingService {
                 .orElseThrow(() -> new EntityNotFoundException("Commande introuvable ID : " + orderId)));
     }
 
+    @Override
+    public List<OrderResponse> getAllOrders() {
+        return orderRepository.findAllByOrderByOrderDateDesc()
+                .stream().map(this::toResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse updateOrderStatus(Long orderId, String status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Commande introuvable ID : " + orderId));
+        try {
+            order.setStatus(Order.OrderStatus.valueOf(status.toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException("Statut invalide : " + status);
+        }
+        return toResponse(orderRepository.save(order));
+    }
+
     private OrderResponse toResponse(Order order) {
         List<OrderItemResponse> items = order.getItems().stream()
                 .map(i -> OrderItemResponse.builder()

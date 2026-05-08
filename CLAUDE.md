@@ -31,7 +31,9 @@ All commands run from `E-store/estore/` on **Windows PowerShell** (use `.\` pref
 
 **MySQL connection URL must include** `allowPublicKeyRetrieval=true` (MySQL 8 caching_sha2_password — already set in `application.properties`).
 
-Database schema is auto-managed (`ddl-auto=update`). Seed data is inserted on first startup by `DataInitializer.java` only when `categories` table is empty — **4 categories, 19 products** (academic catalog: Fournitures scolaires, Livres & Manuels, Informatique étudiant, Papeterie) with inventory entries.
+Database schema is auto-managed (`ddl-auto=update`). `DataInitializer.java` runs on every startup and:
+1. Creates admin user `admin@estore.com` / `admin123` (role ADMIN) if not already present — always runs
+2. Seeds **4 categories + 19 products** (academic catalog: Fournitures scolaires, Livres & Manuels, Informatique étudiant, Papeterie) with inventory — only if `categories` table is empty
 
 To reset seed data, truncate all tables in MySQL then restart:
 ```sql
@@ -56,7 +58,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 | `billing` | Order placement, history | MySQL |
 | `inventory` | Stock levels, deduction on order | MySQL |
 | `mongodb` | Product reviews | MongoDB |
-| `config` | `DataInitializer` seed data | — |
+| `config` | `DataInitializer` seed data + admin user | — |
 | `exception` | `GlobalExceptionHandler` — maps exceptions to HTTP codes | — |
 
 **Cross-domain flow on order placement:** `BillingServiceImpl.placeOrder()` saves the order, calls `InventoryService.deductStock()` per item, then `ShoppingService.clearCart()` — all in one `@Transactional` method.
@@ -91,9 +93,10 @@ Review (MongoDB document) — productId and userId as plain fields
 ### Key Pitfalls & Fixes
 
 - **`Category.products` has `@JsonIgnore`** — without it, Jackson causes infinite recursion (`Category → products → Product.category → Category → ...`) → 500 error. Never remove this annotation.
-- **`UserResponse` includes a nested `ProfileDto`** — `GET /auth/users/{id}` returns `{ id, firstName, lastName, email, profile: { phone, address, city, country } }`. The `toResponse()` method in `CustomerServiceImpl` queries `profileRepository` to build this.
+- **`UserResponse` includes `role` (String) and nested `ProfileDto`** — `GET /auth/users/{id}` returns `{ id, firstName, lastName, email, role, profile: { phone, address, city, country } }`. The `toResponse()` method in `CustomerServiceImpl` queries `profileRepository` to build this.
 - **`ProductResponse` uses flat `categoryName: String`** — not a nested object. Frontend must use `product.categoryName`, not `product.category?.name`.
-- **No Spring Security filter chain** — only `BCryptPasswordEncoder` from `spring-security-crypto`. No JWT — userId is sent directly in API requests.
+- **No Spring Security filter chain** — only `BCryptPasswordEncoder` from `spring-security-crypto`. No JWT — userId is sent directly in API requests. Role enforcement is frontend-only.
+- **Admin user creation** in `DataInitializer` uses `userRepository.existsByEmail()` check — safe to re-run on every startup.
 
 ### Conventions
 
@@ -132,7 +135,7 @@ src/
     └── profile/             # ProfilePage (view/edit profile)
 ```
 
-**Auth flow:** Login response stores `{id, firstName, lastName, email, profile}` in `localStorage` under key `estore_user`. `ProfilePage` calls `GET /auth/users/{id}` to get the latest profile data — does not rely on the stored object for profile fields.
+**Auth flow:** Login response stores `{id, firstName, lastName, email, role, profile}` in `localStorage` under key `estore_user`. Check admin with `user.role === 'ADMIN'`. `ProfilePage` calls `GET /auth/users/{id}` to get the latest profile data — does not rely on the stored object for profile fields.
 
 **API base URL:** `http://localhost:8080/api` — defined in `src/services/api.js`.
 

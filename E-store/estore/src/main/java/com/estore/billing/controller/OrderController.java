@@ -33,4 +33,18 @@ public class OrderController {
     public ResponseEntity<OrderResponse> getOrder(@PathVariable Long orderId) {
         return ResponseEntity.ok(billingService.getOrderById(orderId));
     }
+
+    // GET /api/orders  — toutes les commandes (admin)
+    @GetMapping
+    public ResponseEntity<List<OrderResponse>> getAllOrders() {
+        return ResponseEntity.ok(billingService.getAllOrders());
+    }
+
+    // PUT /api/orders/{orderId}/status?status=CONFIRMED
+    @PutMapping("/{orderId}/status")
+    public ResponseEntity<OrderResponse> updateStatus(
+            @PathVariable Long orderId,
+            @RequestParam String status) {
+        return ResponseEntity.ok(billingService.updateOrderStatus(orderId, status));
+    }
 }

@@ -58,9 +58,10 @@ export default function ProductListPage() {
       <div className="product-grid">
         {products.map((p) => (
           <div key={p.id} className="product-card">
-            {p.imageUrl && (
-              <img src={p.imageUrl} alt={p.name} className="product-img" />
-            )}
+            {p.imageUrls?.[0]
+              ? <img src={p.imageUrls[0]} alt={p.name} className="product-img" />
+              : <div className="product-img-placeholder">📦</div>
+            }
             <div className="product-info">
               <span className="product-category">{p.categoryName}</span>
               <h3>{p.name}</h3>
