@@ -3,7 +3,7 @@ import { getUser, updateProfile } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
 export default function ProfilePage() {
-  const { user }   = useAuth();
+  const { user, updateUser } = useAuth();
   const [form,     setForm]    = useState({ phone: '', address: '', city: '', country: '' });
   const [info,     setInfo]    = useState(null);
   const [msg,      setMsg]     = useState('');
@@ -35,6 +35,7 @@ export default function ProfilePage() {
     setSaving(true);
     try {
       await updateProfile(user.id, form);
+      updateUser({ profile: form });
       setMsg('✅ Profil mis à jour avec succès !');
     } catch {
       setMsg('❌ Erreur lors de la mise à jour.');

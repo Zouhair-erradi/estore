@@ -17,6 +17,8 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     // Vérifier l'existence d'un inventaire pour un produit
     boolean existsByProductId(Long productId);
 
+    void deleteByProductId(Long productId);
+
     // Lister les produits dont le stock est en dessous du seuil
     @Query("SELECT i FROM Inventory i WHERE i.quantity <= i.lowStockThreshold")
     List<Inventory> findLowStockItems();

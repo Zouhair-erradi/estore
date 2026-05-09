@@ -3,6 +3,7 @@ package com.estore.catalog.service;
 import com.estore.catalog.dto.*;
 import com.estore.catalog.entity.*;
 import com.estore.catalog.repository.*;
+import com.estore.inventory.repository.InventoryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     private final ProductRepository  productRepository;
     private final CategoryRepository categoryRepository;
+    private final InventoryRepository inventoryRepository;
 
     @Override
     public List<ProductResponse> getAllProducts() {
@@ -82,6 +84,7 @@ public class CatalogServiceImpl implements CatalogService {
         if (!productRepository.existsById(id)) {
             throw new EntityNotFoundException("Produit introuvable ID : " + id);
         }
+        inventoryRepository.deleteByProductId(id);
         productRepository.deleteById(id);
     }
 

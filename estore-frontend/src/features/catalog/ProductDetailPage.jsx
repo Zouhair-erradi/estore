@@ -87,8 +87,14 @@ export default function ProductDetailPage() {
     load();
   }, [id]);
 
+  const profileComplete = !!(user?.profile?.phone?.trim() && user?.profile?.address?.trim());
+
   const handleAddToCart = async () => {
     if (!user) { navigate('/login'); return; }
+    if (!profileComplete) {
+      setCartMsg('PROFIL');
+      return;
+    }
     try {
       const stockCheck = await checkStock(id, quantity);
       if (!stockCheck.data.sufficient) {
@@ -173,7 +179,14 @@ export default function ProductDetailPage() {
               </button>
             </div>
           )}
-          {cartMsg && <p className={cartMsg.startsWith('✅') ? 'success-msg' : 'error-msg'}>{cartMsg}</p>}
+          {cartMsg === 'PROFIL' ? (
+            <div className="profile-required-msg">
+              ⚠️ Veuillez compléter votre profil (téléphone + adresse) avant d'acheter.{' '}
+              <a href="/profile">Compléter mon profil →</a>
+            </div>
+          ) : cartMsg && (
+            <p className={cartMsg.startsWith('✅') ? 'success-msg' : 'error-msg'}>{cartMsg}</p>
+          )}
         </div>
       </div>
 

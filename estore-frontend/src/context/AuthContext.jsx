@@ -18,8 +18,14 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateUser = (userData) => {
+    const merged = { ...user, ...userData };
+    localStorage.setItem('estore_user', JSON.stringify(merged));
+    setUser(merged);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loginUser, logoutUser }}>
+    <AuthContext.Provider value={{ user, loginUser, logoutUser, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -61,6 +61,7 @@ export default function CartPage() {
   if (loading) return <p className="loading-msg">Chargement du panier...</p>;
 
   const items = cart?.items ?? [];
+  const profileComplete = !!(user?.profile?.phone?.trim() && user?.profile?.address?.trim());
 
   return (
     <div className="page-container">
@@ -105,11 +106,21 @@ export default function CartPage() {
           </div>
 
           <div className="cart-summary">
+            {!profileComplete && (
+              <div className="profile-required-msg">
+                ⚠️ Votre profil est incomplet. Ajoutez votre <strong>téléphone</strong> et votre <strong>adresse</strong> pour passer commande.{' '}
+                <a href="/profile">Compléter mon profil →</a>
+              </div>
+            )}
             <p className="cart-total">Total : <strong>{cart.total?.toFixed(2)} MAD</strong></p>
             {orderMsg && (
               <p className={orderMsg.startsWith('✅') ? 'success-msg' : 'error-msg'}>{orderMsg}</p>
             )}
-            <button className="btn-primary btn-large" onClick={handleOrder} disabled={placing}>
+            <button
+              className="btn-primary btn-large"
+              onClick={handleOrder}
+              disabled={placing || !profileComplete}
+            >
               {placing ? 'Traitement...' : 'Valider la commande'}
             </button>
           </div>
