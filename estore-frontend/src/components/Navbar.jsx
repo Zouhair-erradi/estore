@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { FaStore } from 'react-icons/fa';
 
 export default function Navbar() {
   const { user, logoutUser } = useAuth();
@@ -12,7 +13,10 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      <Link to="/products" className="navbar-brand">E-Store</Link>
+      <Link to="/products" className="navbar-brand">
+        <FaStore className="navbar-logo" />
+        E-Store
+      </Link>
       <div className="navbar-links">
         <Link to="/products">Catalogue</Link>
         {user ? (
